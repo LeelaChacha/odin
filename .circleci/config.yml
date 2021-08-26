@@ -7,13 +7,23 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Build
+          name: Build with Maven
           command: mvn -B -DskipTests -s .circleci.settings.xml clean package
       - run:
-          name: Test
+          name: Run Unit Tests
           command: mvn -s .circleci.settings.xml test
+  scan-with-sonarcloud:
+    docker:
+      - image: cimg/openjdk:11.0
+    steps:
+      - checkout
+      - run:
+          name: Analyze on SonarCloud
+          command: mvn verify -s .circleci.settings.xml sonar:sonar -Dsonar.projectKey=LeelaChacha_odin
 
 workflows:
   ci: 
     jobs:
       - build-and-test
+      - scan-with-sonarcloud:
+          context: SonarCloud

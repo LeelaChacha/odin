@@ -18,6 +18,8 @@
   <url>https://github.com/LeelaChacha/odin</url>
 
   <properties>
+    <sonar.organization>leelachacha</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   </properties>
 
   <dependencies>
