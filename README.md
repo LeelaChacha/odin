@@ -112,7 +112,9 @@ Add jitpack repository to your settings.xml or your pom.xml
     ...
    ```
 <h2 align="center">OR</h2>
+
 **pom.xml**
+
 ```xml
     ...
    <repositories>
