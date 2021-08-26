@@ -8,10 +8,10 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-public class AppTest
+class AppTest
 {
     @Test
-    public void shouldAnswerWithTrue()
+    void shouldAnswerWithTrue()
     {
         assertThat(true).isTrue();
     }
