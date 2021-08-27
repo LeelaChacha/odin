@@ -2,7 +2,7 @@
  * Copyright (c) 2021 Hukumraj Singh Deora
  */
 
-package org.chacha;
+package org.chacha.odin;
 
 public class App
 {
