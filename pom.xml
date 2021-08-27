@@ -27,7 +27,9 @@
   <properties>
     <sonar.organization>leelachacha</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    <sonar.coverage.exclusions>**/MongoDBIntermediate.java</sonar.coverage.exclusions>
+    <sonar.coverage.exclusions>**/MongoDBIntermediate.java,
+      **/Record.java,
+      **/SubscribePledge.java</sonar.coverage.exclusions>
   </properties>
 
   <dependencies>
