@@ -12,10 +12,8 @@ import java.util.ArrayList;
 import java.util.function.BiConsumer;
 
 public class Odin {
-    // TODO: Implement logging
     private static final Logger logger = LoggerFactory.getLogger(Odin.class);
 
-    // TODO: Make settings configurable - possibly make a new class to provide configuration
     private final String subscriberName;
     private final ArrayList<String> listOfTagsToMonitor;
 
@@ -41,14 +39,13 @@ public class Odin {
 
         this.subscriberName = subscriberName;
         this.listOfTagsToMonitor = listOfTagsToMonitor;
-        this.subscribeToTagsIfNotAlready();
         this.schedulerThreadPoolSize = 1;
 
         this.pollingScheduler = pollingScheduler;
         this.databaseIntermediate = databaseIntermediate;
-    }
 
-    // TODO: Add javadoc to public functions
+        this.subscribeToTagsIfNotAlready();
+    }
 
     public void startPollingRecords(BiConsumer<String, String> callback, int intervalInSeconds){
         pollingScheduler.startScheduling(() -> pullRecords(callback), intervalInSeconds);
@@ -60,7 +57,7 @@ public class Odin {
 
     public void pullRecords(BiConsumer<String, String> callback){
         for (String tag : listOfTagsToMonitor){
-            List<String> recordData = databaseIntermediate.pullRecord(tag, subscriberName);
+            List<String> recordData = databaseIntermediate.pullRecordAndRemoveSubscriberNameFromIt(tag, subscriberName);
             for (String singleRecordData : recordData) {
                 callback.accept(singleRecordData, tag);
             }
@@ -73,7 +70,7 @@ public class Odin {
 
     private void subscribeToTagsIfNotAlready(){
         for (String tag : listOfTagsToMonitor) {
-            databaseIntermediate.submitSubscriberPledge(tag, subscriberName);
+            databaseIntermediate.submitSubscribePledgeIfNotAlreadyPresent(tag, subscriberName);
         }
     }
 }

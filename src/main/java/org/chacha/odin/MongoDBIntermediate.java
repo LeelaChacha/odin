@@ -22,23 +22,22 @@ class MongoDBIntermediate implements IDatabaseIntermediate {
     }
 
     @Override
-    public boolean submitSubscriberPledge(String tag, String subscriberName) {
+    public void submitSubscribePledgeIfNotAlreadyPresent(String tag, String subscriberName) {
         // Also add subscriber name to existing records with same tag
-        return false;
     }
 
     @Override
-    public boolean pushRecord(String tag, String data) {
-        return false;
-    }
-
-    @Override
-    public List<String> pullRecord(String tag, String subscriberName) {
-        return null;
+    public void pushRecord(String tag, String data) {
     }
 
     @Override
     public List<String> getAllSubscribersForTag(String tag) {
         return null;
     }
+
+    @Override
+    public List<String> pullRecordAndRemoveSubscriberNameFromIt(String tag, String subscriberName) {
+        return null;
+    }
+
 }

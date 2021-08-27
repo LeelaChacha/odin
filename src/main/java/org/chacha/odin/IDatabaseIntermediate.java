@@ -7,11 +7,11 @@ package org.chacha.odin;
 import java.util.List;
 
 interface IDatabaseIntermediate {
-    boolean submitSubscriberPledge(String tag, String subscriberName);
+    void submitSubscribePledgeIfNotAlreadyPresent(String tag, String subscriberName);
 
-    boolean pushRecord(String tag, String data);
-
-    List<String> pullRecord(String tag, String subscriberName);
+    void pushRecord(String tag, String data);
 
     List<String> getAllSubscribersForTag(String tag);
+
+    List<String> pullRecordAndRemoveSubscriberNameFromIt(String tag, String subscriberName);
 }
