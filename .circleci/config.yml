@@ -18,9 +18,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Run Jacoco Plugin for Test Coverage
-          command: mvn package
-      - run:
           name: Analyze on SonarCloud
           command: mvn verify sonar:sonar -Dsonar.projectKey=LeelaChacha_odin
 
