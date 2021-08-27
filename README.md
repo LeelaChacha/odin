@@ -5,6 +5,9 @@
     <a href="https://sonarcloud.io/dashboard?id=LeelaChacha_odin">
         <img src="https://sonarcloud.io/api/project_badges/measure?project=LeelaChacha_odin&metric=coverage">
     </a>
+    <a href="https://jitpack.io/#LeelaChacha/chacha-maven-parent">
+        <img src="https://jitpack.io/v/LeelaChacha/chacha-maven-parent.svg">
+    </a>
 </p>
 
 <br />
@@ -87,6 +90,8 @@ To get a local copy up and running follow these simple steps.
    ```
 
 ## Usage
+
+[![](https://jitpack.io/v/LeelaChacha/chacha-maven-parent.svg)](https://jitpack.io/#LeelaChacha/chacha-maven-parent)
 
 This framework can be used in your projects with jitpack maven repository.
 Add jitpack repository to your settings.xml or your pom.xml
