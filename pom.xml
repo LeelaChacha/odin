@@ -27,9 +27,15 @@
   <properties>
     <sonar.organization>leelachacha</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <sonar.coverage.exclusions>**/MongoDBIntermediate.java</sonar.coverage.exclusions>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongodb-driver-sync</artifactId>
+      <version>4.3.1</version>
+    </dependency>
   </dependencies>
 
   <build>
