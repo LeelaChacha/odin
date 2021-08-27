@@ -8,10 +8,10 @@ jobs:
       - checkout
       - run:
           name: Build with Maven
-          command: mvn -B -DskipTests -s .circleci/settings.xml clean package
+          command: mvn -B -DskipTests clean package
       - run:
           name: Run Unit Tests
-          command: mvn -s .circleci/settings.xml test
+          command: mvn test
   scan-with-sonarcloud:
     docker:
       - image: cimg/openjdk:11.0
@@ -19,7 +19,7 @@ jobs:
       - checkout
       - run:
           name: Analyze on SonarCloud
-          command: mvn verify -s .circleci/settings.xml sonar:sonar -Dsonar.projectKey=LeelaChacha_odin
+          command: mvn verify sonar:sonar -Dsonar.projectKey=LeelaChacha_odin
 
 workflows:
   ci: 
