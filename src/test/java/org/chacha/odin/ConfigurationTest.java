@@ -32,7 +32,7 @@ class ConfigurationTest {
         configuration = new Configuration("src/test/resources/test.properties");
 
         int threadPoolSize = configuration.getPollingSchedulerThreadPoolSize();
-        assertThat(threadPoolSize).isNotNull().isEqualTo(1);
+        assertThat(threadPoolSize).isEqualTo(1);
     }
 
     @Test

@@ -16,17 +16,16 @@ class Configuration {
 
     public Configuration() throws IOException {
         properties = new Properties();
-        InputStream inputStream = getClass().getResourceAsStream("application.properties");
-        properties.load(inputStream);
-        if (inputStream != null)
-            inputStream.close();
+        try(InputStream inputStream = getClass().getResourceAsStream("application.properties")){
+            properties.load(inputStream);
+        }
     }
 
     Configuration(String pathToPropertiesFile) throws IOException {
         properties = new Properties();
-        InputStream inputStream = new FileInputStream(pathToPropertiesFile);
-        properties.load(inputStream);
-        inputStream.close();
+        try(InputStream inputStream = new FileInputStream(pathToPropertiesFile)){
+            properties.load(inputStream);
+        }
     }
 
     public IDatabaseIntermediate getDatabaseIntermediate() throws MissingPropertyException {
