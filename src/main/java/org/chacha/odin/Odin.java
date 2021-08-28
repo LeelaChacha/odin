@@ -7,6 +7,7 @@ package org.chacha.odin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.function.BiConsumer;
@@ -15,14 +16,14 @@ public class Odin {
     private static final Logger logger = LoggerFactory.getLogger(Odin.class);
 
     private final String subscriberName;
-    private final ArrayList<String> listOfTagsToMonitor;
+    private final List<String> listOfTagsToMonitor;
 
     private final IDatabaseIntermediate databaseIntermediate;
 
     private final int schedulerThreadPoolSize;
     private final PollingScheduler pollingScheduler;
 
-    public Odin() {
+    public Odin() throws IOException, Configuration.MissingPropertyException {
         Configuration odinConfiguration = new Configuration();
         this.subscriberName = odinConfiguration.getSubscriberName();
         this.listOfTagsToMonitor = odinConfiguration.getListOfTagsToMonitor();
