@@ -15,22 +15,23 @@ class Configuration {
     private final Properties properties;
 
     public Configuration() throws IOException {
-        properties = new Properties();
+        this.properties = new Properties();
         try(InputStream inputStream = getClass().getResourceAsStream("application.properties")){
-            properties.load(inputStream);
+            this.properties.load(inputStream);
         }
     }
 
     Configuration(String pathToPropertiesFile) throws IOException {
-        properties = new Properties();
+        this.properties = new Properties();
         try(InputStream inputStream = new FileInputStream(pathToPropertiesFile)){
-            properties.load(inputStream);
+            this.properties.load(inputStream);
         }
     }
 
     public IDatabaseIntermediate getDatabaseIntermediate() throws MissingPropertyException {
         String connectionString = getPropertyAndThrowExceptionIfMissing("odin.connectionString");
-        return new MongoDBIntermediate(connectionString);
+        String databaseName = getPropertyAndThrowExceptionIfMissing("odin.databaseName");
+        return new MongoDBIntermediate(connectionString, databaseName);
     }
 
     public String getSubscriberName() throws MissingPropertyException {

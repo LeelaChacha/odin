@@ -16,11 +16,11 @@ class PollingScheduler implements IPollingScheduler {
     private ScheduledFuture<?> pollingHandle;
 
     PollingScheduler() {
-        scheduler = Executors.newScheduledThreadPool(1);
+        this.scheduler = Executors.newScheduledThreadPool(1);
     }
 
     PollingScheduler(int threadPoolSize) {
-        scheduler = Executors.newScheduledThreadPool(threadPoolSize);
+        this.scheduler = Executors.newScheduledThreadPool(threadPoolSize);
     }
 
     public void startScheduling(Runnable pollingMethod, int intervalInSeconds){
