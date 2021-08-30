@@ -15,23 +15,29 @@ import java.util.function.BiConsumer;
 public class Odin {
     private static final Logger logger = LoggerFactory.getLogger(Odin.class);
 
-    private final String subscriberName;
-    private final List<String> listOfTagsToMonitor;
+    private String subscriberName;
+    private List<String> listOfTagsToMonitor;
 
-    private final IDatabaseIntermediate databaseIntermediate;
+    private IDatabaseIntermediate databaseIntermediate;
 
     private final int schedulerThreadPoolSize;
     private final IPollingScheduler pollingScheduler;
 
-    public Odin() throws IOException, Configuration.MissingPropertyException {
+    public Odin() throws IOException {
         Configuration odinConfiguration = new Configuration();
-        this.subscriberName = odinConfiguration.getSubscriberName();
-        this.listOfTagsToMonitor = odinConfiguration.getListOfTagsToMonitor();
+
+        try {
+            this.subscriberName = odinConfiguration.getSubscriberName();
+            this.listOfTagsToMonitor = odinConfiguration.getListOfTagsToMonitor();
+            this.databaseIntermediate = odinConfiguration.getDatabaseIntermediate();
+        }
+        catch (Configuration.MissingPropertyException e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+        }
 
         this.schedulerThreadPoolSize = odinConfiguration.getPollingSchedulerThreadPoolSize();
         this.pollingScheduler = new PollingScheduler(this.schedulerThreadPoolSize);
-
-        this.databaseIntermediate = odinConfiguration.getDatabaseIntermediate();
 
         this.subscribeToTagsIfNotAlready();
     }
@@ -51,15 +57,19 @@ public class Odin {
     }
 
     public void startPollingRecords(BiConsumer<String, String> callback, int intervalInSeconds){
+        logger.info("Starting to poll for records with " + intervalInSeconds + "s interval.");
         pollingScheduler.startScheduling(() -> pullRecords(callback), intervalInSeconds);
     }
 
     public void stopPollingRecords(){
+        logger.info("Stopping to poll for records.");
         pollingScheduler.stopScheduling();
     }
 
     public void pullRecords(BiConsumer<String, String> callback){
+        logger.info("Pulling all Records.");
         for (String tag : listOfTagsToMonitor){
+            logger.info("Looking for Tag: " + tag);
             List<String> recordsData = databaseIntermediate.pullRecords(tag, subscriberName);
             for (String singleRecordData : recordsData) {
                 callback.accept(tag, singleRecordData);
@@ -69,10 +79,12 @@ public class Odin {
     }
 
     public void pushRecord(String tag, String data){
+        logger.info("Pushing record with Tag: " + tag);
         databaseIntermediate.pushRecord(tag, data);
     }
 
     private void subscribeToTagsIfNotAlready(){
+        logger.info("Subscribing for the following tags: " + listOfTagsToMonitor);
         for (String tag : listOfTagsToMonitor) {
             databaseIntermediate.ensureSubscribePledge(tag, subscriberName);
         }

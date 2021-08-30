@@ -27,13 +27,13 @@ class MongoDBIntermediate implements IDatabaseIntermediate {
     private final MongoCollection<Document> subscribePledgeCollection;
     private final MongoCollection<Document> recordsCollection;
 
-    private final String subscribePledgeFieldNameTag = "tag";
-    private final String subscribePledgeFieldNameSubscriber = "subscriber";
+    private static final String subscribePledgeFieldNameTag = "tag";
+    private static final String subscribePledgeFieldNameSubscriber = "subscriber";
 
-    private final String recordFieldNameTag = "tag";
-    private final String recordFieldNameCreatedAt = "createdAt";
-    private final String recordFieldNameConsumers = "consumersIntended";
-    private final String recordFieldNameData = "data";
+    private static final String recordFieldNameTag = "tag";
+    private static final String recordFieldNameCreatedAt = "createdAt";
+    private static final String recordFieldNameConsumers = "consumersIntended";
+    private static final String recordFieldNameData = "data";
 
     public MongoDBIntermediate(String connectionString, String databaseName) {
         logger.info("MongoDB Intermediate attempting to connect");
@@ -48,7 +48,6 @@ class MongoDBIntermediate implements IDatabaseIntermediate {
     private void ensureIndices(){
         subscribePledgeCollection.createIndex(Indexes.text(subscribePledgeFieldNameTag));
         recordsCollection.createIndex(Indexes.text(recordFieldNameTag));
-        recordsCollection.createIndex(Indexes.hashed("_id"));
         recordsCollection.createIndex(Indexes.descending(recordFieldNameCreatedAt));
     }
 
@@ -58,6 +57,7 @@ class MongoDBIntermediate implements IDatabaseIntermediate {
 
         if (!doesSubscribePledgeExist(subscribePledge))
         {
+            logger.debug("Creating [" + subscribePledge + "] in the database.");
             subscribePledgeCollection.insertOne(convertToDocument(subscribePledge));
             addSubscriberNameToExistingRecordsWithTag(tag, subscriberName);
         }
@@ -74,6 +74,7 @@ class MongoDBIntermediate implements IDatabaseIntermediate {
     }
 
     private void addSubscriberNameToExistingRecordsWithTag(String tag, String subscriberName) {
+        logger.debug("Adding subscriber name to existing records with tag " + tag);
         recordsCollection.find(eq(recordFieldNameTag, tag))
                 .forEach(document -> {
                     var consumers = document.getList(recordFieldNameConsumers, String.class);
@@ -87,6 +88,7 @@ class MongoDBIntermediate implements IDatabaseIntermediate {
         var tagSubscribers = getSubscribersForTag(tag);
         Record rec = new Record(tag, LocalDateTime.now(),
                 (ArrayList<String>) tagSubscribers, data);
+        logger.debug("Pushing Record to database: " + rec);
         recordsCollection.insertOne(convertToDocument(rec));
     }
 
@@ -101,6 +103,7 @@ class MongoDBIntermediate implements IDatabaseIntermediate {
 
     @Override
     public List<String> pullRecords(String tag, String subscriberName) {
+        logger.debug("Pulling all Records with tag: " + tag);
         List<String> recordsData = new ArrayList<>();
         recordsCollection.find(eq(recordFieldNameTag, tag))
                 .sort(Sorts.descending(recordFieldNameCreatedAt))
@@ -115,6 +118,7 @@ class MongoDBIntermediate implements IDatabaseIntermediate {
 
     @Override
     public void deleteAllReadRecords() {
+        logger.debug("Deleting empty Records.");
         recordsCollection.deleteMany(size(recordFieldNameConsumers, 0));
     }
 
