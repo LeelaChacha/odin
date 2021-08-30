@@ -27,6 +27,14 @@ class MongoDBIntermediate implements IDatabaseIntermediate {
     private final MongoCollection<Document> subscribePledgeCollection;
     private final MongoCollection<Document> recordsCollection;
 
+    private final String subscribePledgeFieldNameTag = "tag";
+    private final String subscribePledgeFieldNameSubscriber = "subscriber";
+
+    private final String recordFieldNameTag = "tag";
+    private final String recordFieldNameCreatedAt = "createdAt";
+    private final String recordFieldNameConsumers = "consumersIntended";
+    private final String recordFieldNameData = "data";
+
     public MongoDBIntermediate(String connectionString, String databaseName) {
         logger.info("MongoDB Intermediate attempting to connect");
         MongoClient client = MongoClients.create(connectionString);
@@ -38,10 +46,10 @@ class MongoDBIntermediate implements IDatabaseIntermediate {
     }
 
     private void ensureIndices(){
-        subscribePledgeCollection.createIndex(Indexes.text("tag"));
-        recordsCollection.createIndex(Indexes.text("tag"));
+        subscribePledgeCollection.createIndex(Indexes.text(subscribePledgeFieldNameTag));
+        recordsCollection.createIndex(Indexes.text(recordFieldNameTag));
         recordsCollection.createIndex(Indexes.hashed("_id"));
-        recordsCollection.createIndex(Indexes.descending("createdAt"));
+        recordsCollection.createIndex(Indexes.descending(recordFieldNameCreatedAt));
     }
 
     @Override
@@ -58,35 +66,35 @@ class MongoDBIntermediate implements IDatabaseIntermediate {
     private boolean doesSubscribePledgeExist(SubscribePledge subscribePledge) {
         Document result = subscribePledgeCollection.find(
                 and(
-                        eq("subscriber", subscribePledge.getSubscriberName()),
-                        eq("tag", subscribePledge.getTag())
+                        eq(subscribePledgeFieldNameSubscriber, subscribePledge.getSubscriberName()),
+                        eq(subscribePledgeFieldNameTag, subscribePledge.getTag())
                 )
         ).first();
         return result!=null;
     }
 
     private void addSubscriberNameToExistingRecordsWithTag(String tag, String subscriberName) {
-        recordsCollection.find(eq("tag", tag))
+        recordsCollection.find(eq(recordFieldNameTag, tag))
                 .forEach(document -> {
-                    var consumers = document.getList("consumersIntended", String.class);
+                    var consumers = document.getList(recordFieldNameConsumers, String.class);
                     consumers.add(subscriberName);
-                    recordsCollection.updateOne(eq("_id",document.get("_id")), set("consumersIntended", consumers));
+                    recordsCollection.updateOne(eq("_id",document.get("_id")), set(recordFieldNameConsumers, consumers));
                 });
     }
 
     @Override
     public void pushRecord(String tag, String data) {
         var tagSubscribers = getSubscribersForTag(tag);
-        Record record = new Record(tag, LocalDateTime.now(),
+        Record rec = new Record(tag, LocalDateTime.now(),
                 (ArrayList<String>) tagSubscribers, data);
-        recordsCollection.insertOne(convertToDocument(record));
+        recordsCollection.insertOne(convertToDocument(rec));
     }
 
     private List<String> getSubscribersForTag(String tag) {
         List<String> allSubscribers = new ArrayList<>();
-        subscribePledgeCollection.find(eq("tag", tag))
+        subscribePledgeCollection.find(eq(subscribePledgeFieldNameTag, tag))
                 .forEach( document ->
-                    allSubscribers.add(document.getString("subscriber"))
+                    allSubscribers.add(document.getString(subscribePledgeFieldNameSubscriber))
                 );
         return allSubscribers;
     }
@@ -94,35 +102,35 @@ class MongoDBIntermediate implements IDatabaseIntermediate {
     @Override
     public List<String> pullRecords(String tag, String subscriberName) {
         List<String> recordsData = new ArrayList<>();
-        recordsCollection.find(eq("tag", tag))
-                .sort(Sorts.descending("createdAt"))
+        recordsCollection.find(eq(recordFieldNameTag, tag))
+                .sort(Sorts.descending(recordFieldNameCreatedAt))
                 .forEach(document -> {
-                    recordsData.add(document.getString("data"));
-                    var consumers = document.getList("consumersIntended", String.class);
+                    recordsData.add(document.getString(recordFieldNameData));
+                    var consumers = document.getList(recordFieldNameConsumers, String.class);
                     consumers.remove(subscriberName);
-                    recordsCollection.updateOne(eq("_id",document.get("_id")), set("consumersIntended", consumers));
+                    recordsCollection.updateOne(eq("_id",document.get("_id")), set(recordFieldNameConsumers, consumers));
                 });
         return recordsData;
     }
 
     @Override
     public void deleteAllReadRecords() {
-        recordsCollection.deleteMany(size("consumersIntended", 0));
+        recordsCollection.deleteMany(size(recordFieldNameConsumers, 0));
     }
 
     private Document convertToDocument(SubscribePledge sp){
         Document document = new Document();
-        document.append("subscriber", sp.getSubscriberName());
-        document.append("tag", sp.getTag());
+        document.append(subscribePledgeFieldNameSubscriber, sp.getSubscriberName());
+        document.append(subscribePledgeFieldNameTag, sp.getTag());
         return document;
     }
 
-    private Document convertToDocument(Record record){
+    private Document convertToDocument(Record rec){
         Document document = new Document();
-        document.append("tag", record.getTag());
-        document.append("createdAt", record.getCreatedAt());
-        document.append("consumersIntended", record.getConsumersIntended());
-        document.append("data", record.getData());
+        document.append(recordFieldNameTag, rec.getTag());
+        document.append(recordFieldNameCreatedAt, rec.getCreatedAt());
+        document.append(recordFieldNameConsumers, rec.getConsumersIntended());
+        document.append(recordFieldNameData, rec.getData());
         return document;
     }
 }
