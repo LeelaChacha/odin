@@ -4,6 +4,5 @@
 
 package org.chacha.odin;
 
-// TODO: Implement
 class OdinTest {
 }

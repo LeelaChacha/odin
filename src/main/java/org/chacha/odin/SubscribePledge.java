@@ -4,10 +4,12 @@
 
 package org.chacha.odin;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 class SubscribePledge {
     private String subscriberName;
-    private String tagToBeSubscribed;
+    private String tag;
 }
