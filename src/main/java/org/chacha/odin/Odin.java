@@ -24,7 +24,7 @@ public class Odin {
     private final PollingScheduler pollingScheduler;
 
     public Odin() throws IOException, Configuration.MissingPropertyException {
-        Configuration odinConfiguration = new Configuration();
+        Configuration odinConfiguration = new Configuration("src/main/resources/application.properties");
         this.subscriberName = odinConfiguration.getSubscriberName();
         this.listOfTagsToMonitor = odinConfiguration.getListOfTagsToMonitor();
 
@@ -32,6 +32,8 @@ public class Odin {
         this.pollingScheduler = new PollingScheduler(this.schedulerThreadPoolSize);
 
         this.databaseIntermediate = odinConfiguration.getDatabaseIntermediate();
+
+        this.subscribeToTagsIfNotAlready();
     }
 
     Odin( String subscriberName, ArrayList<String> listOfTagsToMonitor,
@@ -58,20 +60,21 @@ public class Odin {
 
     public void pullRecords(BiConsumer<String, String> callback){
         for (String tag : listOfTagsToMonitor){
-            List<String> recordData = databaseIntermediate.pullRecordAndRemoveSubscriberNameFromIt(tag, subscriberName);
-            for (String singleRecordData : recordData) {
+            List<String> recordsData = databaseIntermediate.pullRecords(tag, subscriberName);
+            for (String singleRecordData : recordsData) {
                 callback.accept(singleRecordData, tag);
             }
         }
+        databaseIntermediate.deleteAllReadRecords();
     }
 
-    public void pushRecords(String tag, String data){
+    public void pushRecord(String tag, String data){
         databaseIntermediate.pushRecord(tag, data);
     }
 
     private void subscribeToTagsIfNotAlready(){
         for (String tag : listOfTagsToMonitor) {
-            databaseIntermediate.submitSubscribePledgeIfNotAlreadyPresent(tag, subscriberName);
+            databaseIntermediate.ensureSubscribePledge(tag, subscriberName);
         }
     }
 }
