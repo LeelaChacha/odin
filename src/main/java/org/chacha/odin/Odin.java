@@ -21,7 +21,7 @@ public class Odin {
     private final IDatabaseIntermediate databaseIntermediate;
 
     private final int schedulerThreadPoolSize;
-    private final PollingScheduler pollingScheduler;
+    private final IPollingScheduler pollingScheduler;
 
     public Odin() throws IOException, Configuration.MissingPropertyException {
         Configuration odinConfiguration = new Configuration("src/main/resources/application.properties");
@@ -38,7 +38,7 @@ public class Odin {
 
     Odin( String subscriberName, ArrayList<String> listOfTagsToMonitor,
           IDatabaseIntermediate databaseIntermediate,
-          PollingScheduler pollingScheduler) {
+          IPollingScheduler pollingScheduler) {
 
         this.subscriberName = subscriberName;
         this.listOfTagsToMonitor = listOfTagsToMonitor;
@@ -62,7 +62,7 @@ public class Odin {
         for (String tag : listOfTagsToMonitor){
             List<String> recordsData = databaseIntermediate.pullRecords(tag, subscriberName);
             for (String singleRecordData : recordsData) {
-                callback.accept(singleRecordData, tag);
+                callback.accept(tag, singleRecordData);
             }
         }
         databaseIntermediate.deleteAllReadRecords();
