@@ -24,7 +24,7 @@ public class Odin {
     private final IPollingScheduler pollingScheduler;
 
     public Odin() throws IOException, Configuration.MissingPropertyException {
-        Configuration odinConfiguration = new Configuration("src/main/resources/application.properties");
+        Configuration odinConfiguration = new Configuration();
         this.subscriberName = odinConfiguration.getSubscriberName();
         this.listOfTagsToMonitor = odinConfiguration.getListOfTagsToMonitor();
 
