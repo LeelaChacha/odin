@@ -27,7 +27,7 @@ class Configuration {
     }
 
     Configuration(String pathToPropertiesFile) throws IOException {
-        logger.info(String.format("Odin will load configuration from %s.", pathToPropertiesFile));
+        logger.info("Odin will load configuration from {}", pathToPropertiesFile);
         this.properties = new Properties();
         try(InputStream inputStream = new FileInputStream(pathToPropertiesFile)){
             this.properties.load(inputStream);
@@ -58,7 +58,7 @@ class Configuration {
 
     private String getPropertyAndThrowExceptionIfMissing(String propertyName)
             throws MissingPropertyException {
-        logger.debug(String.format("Looking for Property: %s", propertyName));
+        logger.debug("Looking for Property: {}", propertyName);
         String property = properties.getProperty(propertyName);
         if(property == null)
             throw new MissingPropertyException(propertyName);

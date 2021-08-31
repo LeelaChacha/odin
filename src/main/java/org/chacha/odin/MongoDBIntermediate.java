@@ -57,7 +57,7 @@ class MongoDBIntermediate implements IDatabaseIntermediate {
 
         if (!doesSubscribePledgeExist(subscribePledge))
         {
-            logger.debug(String.format("Creating [%s] in the Database.", subscribePledge));
+            logger.debug("Creating [{}] in the Database.", subscribePledge);
             subscribePledgeCollection.insertOne(convertToDocument(subscribePledge));
             addSubscriberNameToExistingRecordsWithTag(tag, subscriberName);
         }
@@ -74,7 +74,7 @@ class MongoDBIntermediate implements IDatabaseIntermediate {
     }
 
     private void addSubscriberNameToExistingRecordsWithTag(String tag, String subscriberName) {
-        logger.debug(String.format("Adding Subscriber Name to existing Records with Rag %s", tag));
+        logger.debug("Adding Subscriber Name to existing Records with Tag {}", tag);
         recordsCollection.find(eq(RECORD_FIELD_NAME_TAG, tag))
                 .forEach(document -> {
                     var consumers = document.getList(RECORD_FIELD_NAME_CONSUMERS, String.class);
@@ -88,7 +88,7 @@ class MongoDBIntermediate implements IDatabaseIntermediate {
         var tagSubscribers = getSubscribersForTag(tag);
         Record rec = new Record(tag, LocalDateTime.now(),
                 (ArrayList<String>) tagSubscribers, data);
-        logger.debug(String.format("Pushing Record to Database: %s", rec));
+        logger.debug("Pushing Record to Database: {}", rec);
         recordsCollection.insertOne(convertToDocument(rec));
     }
 
@@ -103,7 +103,7 @@ class MongoDBIntermediate implements IDatabaseIntermediate {
 
     @Override
     public List<String> pullRecords(String tag, String subscriberName) {
-        logger.debug(String.format("Pulling all Records with Tag: %s", tag));
+        logger.debug("Pulling all Records with Tag: {}", tag);
         List<String> recordsData = new ArrayList<>();
         recordsCollection.find(eq(RECORD_FIELD_NAME_TAG, tag))
                 .sort(Sorts.descending(RECORD_FIELD_NAME_CREATED_AT))

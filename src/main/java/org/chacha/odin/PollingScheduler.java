@@ -24,7 +24,7 @@ class PollingScheduler implements IPollingScheduler {
     }
 
     PollingScheduler(int threadPoolSize) {
-        logger.debug(String.format("PollingScheduler initialised with Thread Pool size: %d", threadPoolSize));
+        logger.debug("PollingScheduler initialised with Thread Pool size: {}", threadPoolSize);
         this.scheduler = Executors.newScheduledThreadPool(threadPoolSize);
     }
 
