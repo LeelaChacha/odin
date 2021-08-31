@@ -33,7 +33,6 @@ public class Odin {
         }
         catch (Configuration.MissingPropertyException e) {
             logger.error(e.getMessage(), e);
-            e.printStackTrace();
         }
 
         this.schedulerThreadPoolSize = odinConfiguration.getPollingSchedulerThreadPoolSize();
