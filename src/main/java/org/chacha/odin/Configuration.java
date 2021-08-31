@@ -27,7 +27,7 @@ class Configuration {
     }
 
     Configuration(String pathToPropertiesFile) throws IOException {
-        logger.info("Odin will load configuration from " + pathToPropertiesFile);
+        logger.info(String.format("Odin will load configuration from %s.", pathToPropertiesFile));
         this.properties = new Properties();
         try(InputStream inputStream = new FileInputStream(pathToPropertiesFile)){
             this.properties.load(inputStream);
@@ -36,7 +36,7 @@ class Configuration {
 
     public IDatabaseIntermediate getDatabaseIntermediate()
             throws MissingPropertyException {
-        logger.debug("Injecting Database Dependency-");
+        logger.debug("Injecting Database Dependency.");
         String connectionString = getPropertyAndThrowExceptionIfMissing("odin.connectionString");
         String databaseName = getPropertyAndThrowExceptionIfMissing("odin.databaseName");
         return new MongoDBIntermediate(connectionString, databaseName);
@@ -58,7 +58,7 @@ class Configuration {
 
     private String getPropertyAndThrowExceptionIfMissing(String propertyName)
             throws MissingPropertyException {
-        logger.debug("Looking for Property: " + propertyName);
+        logger.debug(String.format("Looking for Property: %s", propertyName));
         String property = properties.getProperty(propertyName);
         if(property == null)
             throw new MissingPropertyException(propertyName);
@@ -67,7 +67,7 @@ class Configuration {
 
     static class MissingPropertyException extends Exception{
         public MissingPropertyException(String propertyName) {
-            super("The required property [" + propertyName + "] is missing from properties file");
+            super(String.format("The required property [%s] is missing from properties file", propertyName));
         }
     }
 }

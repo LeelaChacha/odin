@@ -57,7 +57,7 @@ public class Odin {
     }
 
     public void startPollingRecords(BiConsumer<String, String> callback, int intervalInSeconds){
-        logger.info("Starting to poll for records with " + intervalInSeconds + "s interval.");
+        logger.info(String.format("Starting to poll for records with %ds interval.", intervalInSeconds));
         pollingScheduler.startScheduling(() -> pullRecords(callback), intervalInSeconds);
     }
 
@@ -69,7 +69,7 @@ public class Odin {
     public void pullRecords(BiConsumer<String, String> callback){
         logger.info("Pulling all Records.");
         for (String tag : listOfTagsToMonitor){
-            logger.info("Looking for Tag: " + tag);
+            logger.info(String.format("Looking for Tag: %s", tag));
             List<String> recordsData = databaseIntermediate.pullRecords(tag, subscriberName);
             for (String singleRecordData : recordsData) {
                 callback.accept(tag, singleRecordData);
@@ -79,12 +79,12 @@ public class Odin {
     }
 
     public void pushRecord(String tag, String data){
-        logger.info("Pushing record with Tag: " + tag);
+        logger.info(String.format("Pushing record with Tag: %s", tag));
         databaseIntermediate.pushRecord(tag, data);
     }
 
     private void subscribeToTagsIfNotAlready(){
-        logger.info("Subscribing for the following tags: " + listOfTagsToMonitor);
+        logger.info(String.format("Subscribing for the following tags: %s", listOfTagsToMonitor));
         for (String tag : listOfTagsToMonitor) {
             databaseIntermediate.ensureSubscribePledge(tag, subscriberName);
         }
