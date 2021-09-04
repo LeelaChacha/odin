@@ -19,7 +19,7 @@
 
   <groupId>org.chacha.odin</groupId>
   <artifactId>odin</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
 
   <name>odin</name>
   <url>https://github.com/LeelaChacha/odin</url>
