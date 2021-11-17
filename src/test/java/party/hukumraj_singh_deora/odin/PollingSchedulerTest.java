@@ -2,7 +2,7 @@
  * Copyright (c) 2021 Hukumraj Singh Deora
  */
 
-package org.chacha.odin;
+package party.hukumraj_singh_deora.odin;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,14 +22,14 @@ class PollingSchedulerTest {
     }
 
     @Test
-    void shouldScheduleMethodAtProvidedInterval() throws InterruptedException {
+    void shouldScheduleMethodAtProvidedInterval() {
         AtomicInteger counter = new AtomicInteger();
         counter.set(0);
 
         pollingScheduler.startScheduling(counter::getAndIncrement, 5);
         await().atLeast(9, TimeUnit.SECONDS)
                 .atMost(15, TimeUnit.SECONDS)
-                .until(() -> {return counter.get() == 2;});
+                .until(() -> counter.get() == 2);
         pollingScheduler.stopScheduling();
 
         assertThat(counter.get()).isEqualTo(2);

@@ -2,7 +2,7 @@
  * Copyright (c) 2021 Hukumraj Singh Deora
  */
 
-package org.chacha.odin;
+package party.hukumraj_singh_deora.odin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +88,7 @@ public class Odin {
      * @param callback This is the method that will be called when a record is pulled.
      *                 You can give a lambda expression with two inputs (String tag, String data).
      *                 The records will be pulled in a LIFO manner.
-     * This function only looks for records once. If you want to look for records periodically use {@link org.chacha.odin.Odin#startPollingRecords(BiConsumer, int)}
+     * This function only looks for records once. If you want to look for records periodically use {@link Odin#startPollingRecords(BiConsumer, int)}
      */
     public void pullRecords(BiConsumer<String, String> callback){
         logger.info("Pulling all Records.");

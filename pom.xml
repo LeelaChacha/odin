@@ -17,7 +17,7 @@
     <version>1.2.1</version>
   </parent>
 
-  <groupId>org.chacha.odin</groupId>
+  <groupId>party.hukumraj_singh_deora.odin</groupId>
   <artifactId>odin</artifactId>
   <version>1.0</version>
 

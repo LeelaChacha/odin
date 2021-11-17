@@ -2,7 +2,7 @@
  * Copyright (c) 2021 Hukumraj Singh Deora
  */
 
-package org.chacha.odin;
+package party.hukumraj_singh_deora.odin;
 
 import java.util.List;
 
